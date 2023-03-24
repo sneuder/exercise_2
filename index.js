@@ -9,12 +9,15 @@ const results = {
 };
 
 let modeCount = {};
+let indexPrice = 0;
 
 function startOperations() {
-  prices.forEach((price) => {
-    getAverage(price);
+  prices.forEach((price, index) => {
+    indexPrice = index;
+
+    getAverage(price, index);
     getMaxValue(price);
-    getMode(price);
+    getMode(price, index);
     getTotal(price);
     getTotalLess(price);
   });
@@ -34,9 +37,7 @@ showUpResults();
 function getAverage(price) {
   results.average += price;
 
-  if (lastPrice(price)) {
-    results.average = Math.ceil(results.average / prices.length);
-  }
+  if (lastPrice()) results.average /= prices.length;
 }
 
 function getMaxValue(price) {
@@ -47,7 +48,7 @@ function getMode(price) {
   if (!modeCount[price]) modeCount[price] = 0;
   modeCount[price] += 1;
 
-  if (lastPrice(price)) {
+  if (lastPrice()) {
     Object.keys(modeCount).forEach((modeCountKey) => {
       modeCountKey = parseInt(modeCountKey);
       if (!modeCount[results.mode]) results.mode = modeCountKey;
@@ -67,7 +68,7 @@ function getTotalLess(price, lessThan = 1500) {
 
 // utils
 
-function lastPrice(price) {
-  if (prices[prices.length - 1] === price) return true;
+function lastPrice() {
+  if (prices.length - 1 === indexPrice) return true;
   return false;
 }
